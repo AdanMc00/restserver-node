@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const bodyParser= require('body-parser');
-require('config/config');
+require('./config/config');
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
 
@@ -16,6 +16,6 @@ app.post('/usuario', function (req, res) {
     res.json({body})
 })
 
-app.listen(proccess.env.PORT, ()=> {
+app.listen(process.env.PORT, ()=> {
     console.log('escuchando puerto: ', 3000)
 })
