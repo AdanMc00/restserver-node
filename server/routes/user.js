@@ -1,11 +1,11 @@
 const express = require('express')
 const bcrypt = require('bcrypt');
 const _ = require('underscore')
-
+const Usuario = require('../models/user')
+const {auth, verificarAdminRole} = require('../middlewares/jwt')
 const app = express()
 
-const Usuario = require('../models/user')
-app.get('/usuario', function (req, res) {
+app.get('/usuario', auth, function (req, res) {
 
     let desde = req.query.desde || 0;
     desde = Number(desde);
@@ -34,7 +34,7 @@ app.get('/usuario', function (req, res) {
 
 
 })
-app.post('/usuario', function (req, res) {
+app.post('/usuario', [auth, verificarAdminRole], function (req, res) {
     let body = req.body
     let usuario = new Usuario({
         nombre: body.nombre,
@@ -58,7 +58,7 @@ app.post('/usuario', function (req, res) {
         })
     })
 })
-app.put('/usuario/:id', function (req, res) {
+app.put('/usuario/:id', [auth, verificarAdminRole], function (req, res) {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'role', 'estado', 'img']);
@@ -80,7 +80,7 @@ app.put('/usuario/:id', function (req, res) {
         })
     })
 })
-app.delete('/usuario/:id', function (req, res) {
+app.delete('/usuario/:id', [auth, verificarAdminRole], function (req, res) {
     let id = req.params.id;
     let cambio = {
         estado: false
@@ -103,7 +103,6 @@ app.delete('/usuario/:id', function (req, res) {
                 }
             })
         }
-
         res.json({
             ok: true,
             usuario: usuarioBorrado
