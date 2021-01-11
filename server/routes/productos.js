@@ -1,15 +1,15 @@
 const express = require('express');
 const {auth} = require('../middlewares/jwt')
 let Producto = require('../models/productos')
-let app= express();
+let app = express();
 
 
-app.get('/producto', auth, (req, res) => {
+app.get('/productos', auth, (req, res) => {
 
     let desde = req.query.desde || 0;
     desde = Number(desde)
 
-    Producto.find({ disponible: true })
+    Producto.find({disponible: true})
         .skip(desde)
         .limit(5)
         .sort('nombre')
@@ -30,7 +30,7 @@ app.get('/producto', auth, (req, res) => {
         })
 })
 
-app.get('/producto/:id', auth, (req, res) => {
+app.get('/productos/:id', auth, (req, res) => {
     let id = req.params.id
     Producto.findById(id)
         .sort('nombre')
@@ -51,12 +51,12 @@ app.get('/producto/:id', auth, (req, res) => {
         })
 })
 
-app.get('/producto/buscar/:word', auth,(req,res) => {
+app.get('/productos/buscar/:word', auth, (req, res) => {
     let word = req.params.word
     let regEx = new RegExp(word, 'i')
-    Producto.find({ nombre : regEx})
-        .populate('categoria','nombre')
-        .exec((err,producto)=> {
+    Producto.find({nombre: regEx})
+        .populate('categoria', 'nombre')
+        .exec((err, producto) => {
             if (err) {
                 return res.status(401).json({
                     ok: false,
@@ -69,16 +69,15 @@ app.get('/producto/buscar/:word', auth,(req,res) => {
                 producto
             })
         })
-        })
+})
 
 
-
-app.post('/producto', auth, (req, res) => {
+app.post('/productos', auth, (req, res) => {
 
     let body = req.body;
     let producto = new Producto({
-        nombre:body.nombre,
-        precioUni:body.precioUni,
+        nombre: body.nombre,
+        precioUni: body.precioUni,
         categoria: body.categoria,
         descripcion: body.descripcion,
         usuario: req.usuario._id,
@@ -97,7 +96,7 @@ app.post('/producto', auth, (req, res) => {
     })
 })
 
-app.put('/producto/:id', auth, (req, res) => {
+app.put('/productos/:id', auth, (req, res) => {
 
     let id = req.params.id;
     let body = req.body;
@@ -121,7 +120,7 @@ app.put('/producto/:id', auth, (req, res) => {
 
 })
 
-app.delete('/producto/:id', [auth], (req, res) => {
+app.delete('/productos/:id', [auth], (req, res) => {
     let id = req.params.id;
     let cambio = {
         disponible: false
@@ -150,10 +149,6 @@ app.delete('/producto/:id', [auth], (req, res) => {
         });
     })
 });
-
-
-
-
 
 
 module.exports = app;
